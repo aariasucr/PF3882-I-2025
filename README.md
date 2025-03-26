@@ -8,6 +8,9 @@ Todos los ejemplos vistos en clase serán publicados en este repositorio. Estare
 
 #### Python
 
+- [Docker](https://www.docker.com/products/docker-desktop)
+  - Para Windows y macOS, instalar Docker Desktop
+  - Para Linux, instalar Docker Engine y Docker Compose
 - [Python 3.9](https://www.python.org/downloads/) o superior
 - [Visual Studio Code](https://code.visualstudio.com/) o [PyCharm](https://www.jetbrains.com/pycharm/)
   - Para VS Code se recomienda instalar la [extensión de Python de Microsoft](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
