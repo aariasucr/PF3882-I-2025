@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  01-flaskintro:
+    build: ./01-flaskintro
+    container_name: 01-flaskintro
+    ports:
+      - "5001:5000"
+    restart: always
+    hostname: 01-flaskintro
+
+  02-flaskswagger:
+    build: ./02-flaskswagger
+    container_name: 02-flaskswagger
+    ports:
+      - "5002:5000"
+    restart: always
+    hostname: 02-flaskswagger
+
+  03-flaskmarshmallow:
+    build: ./03-flaskmarshmallow
+    container_name: 03-flaskmarshmallow
+    ports:
+      - "5003:5000"
+    restart: always
+    hostname: 03-flaskmarshmallow
+
+  04-flaskrequests:
+    build: ./04-flaskrequests
+    container_name: 04-flaskrequests
+    ports:
+      - "5004:5000"
+    restart: always
+    hostname: 04-flaskrequests
+
+  05-flaskblueprints:
+    build: ./05-flaskblueprints
+    container_name: 05-flaskblueprints
+    ports:
+      - "5005:5000"
+    restart: always
+    hostname: 05-flaskblueprints
