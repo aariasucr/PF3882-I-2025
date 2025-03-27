@@ -1,16 +1,26 @@
 from flask import Flask, jsonify, request
+from faker import Faker
 
 app = Flask(__name__)
 
-books = [
-    {"id": 1, "title": "1984", "author": "George Orwell"},
-    {"id": 2, "title": "La casa de los espíritus", "author": "Isabel Allende"},
-    {"id": 3, "title": "Concherías", "author": "Aquileo Echeverría"},
-    {"id": 4, "title": "The Catcher in the Rye", "author": "J.D. Salinger"},
-    {"id": 5, "title": "Cuentos de angustias y paisajes", "author": "Carlos Salazar"},
-    {"id": 6, "title": "The Great Gatsby", "author": "F. Scott Fitzgerald"},
-    {"id": 7, "title": "Cien años de soledad", "author": "Gabriel García Márquez"}
-]
+# books = [
+#     {"id": 1, "title": "1984", "author": "George Orwell"},
+#     {"id": 2, "title": "La casa de los espíritus", "author": "Isabel Allende"},
+#     {"id": 3, "title": "Concherías", "author": "Aquileo Echeverría"},
+#     {"id": 4, "title": "The Catcher in the Rye", "author": "J.D. Salinger"},
+#     {"id": 5, "title": "Cuentos de angustias y paisajes", "author": "Carlos Salazar"},
+#     {"id": 6, "title": "The Great Gatsby", "author": "F. Scott Fitzgerald"},
+#     {"id": 7, "title": "Cien años de soledad", "author": "Gabriel García Márquez"}
+# ]
+
+fake = Faker()
+books = []
+for i in range(1, 51):
+    books.append({
+        "id": i,
+        "title": fake.catch_phrase(),
+        "author": fake.name()
+    })
 
 
 # @app.route('/patito/saludito', methods=['GET'])
