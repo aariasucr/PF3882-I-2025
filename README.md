@@ -12,13 +12,13 @@ Todos los ejemplos vistos en clase serán publicados en este repositorio. Estare
   - Para Windows y macOS, instalar Docker Desktop
   - Para Linux, instalar Docker Engine y Docker Compose
 - [Python 3.9](https://www.python.org/downloads/) o superior
-- [Visual Studio Code](https://code.visualstudio.com/) o [PyCharm](https://www.jetbrains.com/pycharm/)
+- [Visual Studio Code](https://code.visualstudio.com/) o [PyCharm](https://www.jetbrains.com/pycharm/download/other.html)
   - Para VS Code se recomienda instalar la [extensión de Python de Microsoft](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
   - En clases usaremos VS Code
 
 #### Java
 
 - [Java 17 o superior](https://www.oracle.com/java/technologies/downloads/?er=221886)
-- [Visual Studio Code](https://code.visualstudio.com/) o [IntelliJ IDEA](https://www.jetbrains.com/idea/)
+- [Visual Studio Code](https://code.visualstudio.com/) o [IntelliJ IDEA](https://www.jetbrains.com/idea/download/other.html)
   - Para VS Code se recomienda instalar la [extensión de Java de Red Hat](https://marketplace.visualstudio.com/items?itemName=redhat.java)
   - En clases usaremos IntelliJ
