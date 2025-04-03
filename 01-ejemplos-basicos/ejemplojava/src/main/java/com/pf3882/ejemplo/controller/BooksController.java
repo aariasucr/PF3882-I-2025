@@ -3,6 +3,7 @@ package com.pf3882.ejemplo.controller;
 import com.pf3882.ejemplo.dto.BookDTO;
 import com.pf3882.ejemplo.service.BookService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,8 +39,12 @@ public class BooksController {
   }
 
   @DeleteMapping("/{id}")
-  public void deleteBook(@PathVariable("id") int id) {
+//  public void deleteBook(@PathVariable("id") int id) {
+//    this.bookService.deleteBook(id);
+//  }
+  public ResponseEntity<?> deleteBook(@PathVariable("id") int id) {
     this.bookService.deleteBook(id);
+    return ResponseEntity.noContent().build();
   }
 
 }

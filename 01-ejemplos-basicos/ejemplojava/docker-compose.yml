@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  ejemplojava:
+    build: .
+    container_name: ejemplojava
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      "pf3882.postServiceBaseUrl": =https://jsonplaceholder.typicode.com
+#      "pf3882.postServiceBaseUrl": http://patito.com
