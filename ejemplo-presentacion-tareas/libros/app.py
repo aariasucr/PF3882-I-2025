@@ -2,6 +2,11 @@ from flask import Flask, jsonify, request
 from flasgger import Swagger
 import logging
 import requests
+from dotenv import load_dotenv
+import os
+
+load_dotenv("config.env")
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -92,7 +97,7 @@ def find_book(libro_id):
 
 
 def find_author_from_book(autor_id):
-    autores_service = "http://localhost:5002"
+    autores_service = os.getenv("AUTORES_SERVICE")
 
     app.logger.info("Servicio de autores: %s", autores_service)
 

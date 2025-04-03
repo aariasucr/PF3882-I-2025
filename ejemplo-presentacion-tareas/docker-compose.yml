@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  usuarios:
+    build: usuarios/.
+    container_name: usuarios
+    ports:
+      - "5003:5000"
+    restart: always
+    hostname: usuarios
+
+  libros:
+    build: libros/.
+    container_name: libros
+    ports:
+      - "5001:5000"
+    restart: always
+    hostname: libros
+    environment:
+      "AUTORES_SERVICE": http://autores:5000
+
+  autores:
+    build: autores/.
+    container_name: autores
+    ports:
+      - "5002:5000"
+    restart: always
+    hostname: autores
+
+  prestamos:
+    build: prestamos/.
+    container_name: prestamos
+    ports:
+      - "8080:8080"
+    restart: always
+    hostname: prestamos
+    environment:
+      "pf3882.usuariosServiceBaseUrl": http://usuarios:5000
+      "pf3882.librosServiceBaseUrl": http://libros:5000
