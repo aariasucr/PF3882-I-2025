@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" # RabbitMQ messaging
+      - "15672:15672" # RabbitMQ management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    hostname: rabbitmq
+
+  python:
+    build: python/.
+    container_name: python
+    ports:
+      - "5000:5000"
+    restart: always
+    hostname: python
+    environment:
+      "RABBITMQ_HOST": "rabbitmq"
+    depends_on:
+      - rabbitmq
+
+  java:
+    build: java/.
+    container_name: java
+    ports:
+      - "8080:8080"
+    restart: always
+    hostname: java
+    environment:
+      "spring.rabbitmq.host": "rabbitmq"
+    depends_on:
+      - rabbitmq
