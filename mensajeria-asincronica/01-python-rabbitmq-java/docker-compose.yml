@@ -31,5 +31,5 @@ services:
     hostname: receptorjava
     environment:
       "spring.rabbitmq.host": "rabbitmq"
-      "spring.rabbitmq.requested-heartbeat": 5
-      "spring.rabbitmq.connection-timeout": 5000
+      "spring.rabbitmq.requested-heartbeat": 5 # reintenta la conexión cada 5 segundos
+      "spring.rabbitmq.connection-timeout": 5000 # timeout de conexión
