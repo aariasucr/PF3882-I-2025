@@ -42,6 +42,8 @@ PYTHONPATH=$(pwd) pytest tests/test_pact.py -W ignore::PendingDeprecationWarning
 
 ```
 
+Este comando va a crear la carpeta `./pacts` con archivos JSON con las pruebas de contrato que se ejecutaran luego contra el API real.
+
 ### 4.4. Validar contratos generados por Pact contra API real
 
 ```bash
