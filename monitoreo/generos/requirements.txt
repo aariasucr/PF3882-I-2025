@@ -1,0 +1,7 @@
+Flask
+Flasgger
+Flask-SQLAlchemy
+psycopg2-binary
+python-dotenv
+Faker
+gunicorn
