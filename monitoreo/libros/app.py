@@ -4,17 +4,20 @@ from flasgger import Swagger
 from models import db, Libro
 from config import SQLALCHEMY_DATABASE_URI, SQLALCHEMY_TRACK_MODIFICATIONS, AUTORES_URL, GENEROS_URL
 import requests
+from log_utils import init_logging, CORRELATION_ID_HEADER
+import uuid
 
-import logging
+# Logging basico, sin Correlation ID
+# import logging
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        # logging.FileHandler("app.log"),
-        logging.StreamHandler()
-    ]
-)
+# logging.basicConfig(
+#     level=logging.INFO,
+#     format="%(asctime)s - %(levelname)s - %(message)s",
+#     handlers=[
+#         # logging.FileHandler("app.log"),
+#         logging.StreamHandler()
+#     ]
+# )
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
@@ -26,6 +29,22 @@ app.config['SWAGGER'] = {
 
 Swagger(app)
 db.init_app(app)
+
+# Inicializamos el logger que incluye Correlation ID
+init_logging()
+
+
+# Antes de cada request, se genera un Correlation ID si no existe
+@app.before_request
+def set_correlation_id():
+    g.correlation_id = request.headers.get(
+        CORRELATION_ID_HEADER, str(uuid.uuid4()))
+
+
+@app.after_request
+def add_correlation_id_to_response(response):
+    response.headers[CORRELATION_ID_HEADER] = g.correlation_id
+    return response
 
 
 @app.route('/libros', methods=['GET'])
@@ -144,19 +163,24 @@ def create_libro():
     data = request.get_json()
     try:
         app.logger.info(f"Datos recibidos: {data}")
-        app.logger.info(
-            f"Llamando a {AUTORES_URL}/autores/{data['autor_id']}")
+        # app.logger.info(
+        #     f"Llamando a {AUTORES_URL}/autores/{data['autor_id']}")
         # headers = {CORRELATION_ID_HEADER: g.correlation_id}
         # autor_resp = requests.get(
         #     f"{AUTORES_URL}/autores/{data['autor_id']}", headers=headers)
-        autor_resp = requests.get(
+        autor_resp = get_api_externo(
             f"{AUTORES_URL}/autores/{data['autor_id']}")
-        app.logger.info(
-            f"Llamando a {GENEROS_URL}/generos/{data['autor_id']}")
+        # autor_resp = requests.get(
+        #     f"{AUTORES_URL}/autores/{data['autor_id']}")
+        # app.logger.info(
+        #     f"Llamando a {GENEROS_URL}/generos/{data['autor_id']}")
         # genero_resp = requests.get(
         #     f"{GENEROS_URL}/generos/{data['genero_id']}", headers=headers)
-        genero_resp = requests.get(
+        # genero_resp = requests.get(
+        #     f"{GENEROS_URL}/generos/{data['genero_id']}")
+        genero_resp = get_api_externo(
             f"{GENEROS_URL}/generos/{data['genero_id']}")
+
         if autor_resp.status_code != 200 or genero_resp.status_code != 200:
             return jsonify({'error': 'Autor o género no encontrado'}), 400
         autor_data = autor_resp.json()
@@ -232,18 +256,24 @@ def update_libro(libro_id):
             # headers = {CORRELATION_ID_HEADER: g.correlation_id}
             # autor_resp = requests.get(
             #     f"{AUTORES_URL}/autores/{data['autor_id']}", headers=headers)
-            autor_resp = requests.get(
+            # autor_resp = requests.get(
+            #     f"{AUTORES_URL}/autores/{data['autor_id']}")
+            autor_resp = get_api_externo(
                 f"{AUTORES_URL}/autores/{data['autor_id']}")
             if autor_resp.status_code != 200:
                 return jsonify({'error': 'Autor no encontrado'}), 400
             autor_data = autor_resp.json()
             libro.autor_id = data['autor_id']
             libro.autor = autor_data.get('nombre', '')
+
         if 'genero_id' in data and data['genero_id'] != libro.genero_id:
             # genero_resp = requests.get(
             #     f"{GENEROS_URL}/generos/{data['genero_id']}", headers=headers)
-            genero_resp = requests.get(
+            # genero_resp = requests.get(
+            #     f"{GENEROS_URL}/generos/{data['genero_id']}")
+            genero_resp = get_api_externo(
                 f"{GENEROS_URL}/generos/{data['genero_id']}")
+
             if genero_resp.status_code != 200:
                 return jsonify({'error': 'Género no encontrado'}), 400
             genero_data = genero_resp.json()
@@ -255,6 +285,13 @@ def update_libro(libro_id):
         return jsonify(libro.to_dict())
     except Exception as e:
         return jsonify({'error': str(e)}), 400
+
+
+def get_api_externo(url):
+    headers = {CORRELATION_ID_HEADER: g.correlation_id}
+    app.logger.info(f"Llamando a {url}")
+    respuesta = requests.get(f"{url}", headers=headers)
+    return respuesta
 
 
 if __name__ == '__main__':

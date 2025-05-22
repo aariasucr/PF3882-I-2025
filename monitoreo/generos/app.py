@@ -3,17 +3,20 @@ from flask import Flask, request, jsonify, g
 from flasgger import Swagger, swag_from
 from config import SQLALCHEMY_DATABASE_URI, SQLALCHEMY_TRACK_MODIFICATIONS
 from models import db, Genero
+from log_utils import init_logging, CORRELATION_ID_HEADER
+import uuid
 
-import logging
+# Logging basico sin Correlation ID
+# import logging
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        # logging.FileHandler("app.log"),
-        logging.StreamHandler()
-    ]
-)
+# logging.basicConfig(
+#     level=logging.INFO,
+#     format="%(asctime)s - %(levelname)s - %(message)s",
+#     handlers=[
+#         # logging.FileHandler("app.log"),
+#         logging.StreamHandler()
+#     ]
+# )
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
@@ -25,6 +28,21 @@ app.config['SWAGGER'] = {
 
 swagger = Swagger(app)
 db.init_app(app)
+
+
+init_logging()
+
+
+@app.before_request
+def set_correlation_id():
+    g.correlation_id = request.headers.get(
+        CORRELATION_ID_HEADER, str(uuid.uuid4()))
+
+
+@app.after_request
+def add_correlation_id_to_response(response):
+    response.headers[CORRELATION_ID_HEADER] = g.correlation_id
+    return response
 
 
 @app.route('/generos/<int:genero_id>', methods=['GET'])
