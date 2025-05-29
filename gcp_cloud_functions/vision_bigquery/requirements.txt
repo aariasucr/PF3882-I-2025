@@ -1,0 +1,2 @@
+google-cloud-vision
+google-cloud-bigquery

@@ -1,0 +1,3 @@
+google-cloud-vision
+google-cloud-storage
+Pillow
