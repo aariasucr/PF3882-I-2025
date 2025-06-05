@@ -1,0 +1,17 @@
+Flask==2.3.3
+Flask-SQLAlchemy==3.0.5
+Flask-Migrate==4.0.5
+Flask-CORS==4.0.0
+flasgger==0.9.7.1
+marshmallow==3.20.1
+marshmallow-sqlalchemy==0.29.0
+# Use SQLite for development if PostgreSQL is not available
+# For PostgreSQL: pip install psycopg2-binary (requires PostgreSQL headers)
+# For SQLite: no additional dependencies needed
+psycopg2-binary==2.9.9; platform_system != "Darwin"
+psycopg2-binary==2.9.9; platform_system == "Darwin" and platform_machine == "x86_64"
+requests==2.31.0
+python-dotenv==1.0.0
+gunicorn==21.2.0
+pytest==7.4.2
+pytest-cov==4.1.0 

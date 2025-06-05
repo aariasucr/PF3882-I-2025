@@ -1,0 +1,118 @@
+services:
+  # Infrastructure
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: saga
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Microservices
+  carrito:
+    build: ./carrito
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/saga
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+      - INVENTARIO_SERVICE_URL=http://inventario:3001
+      - PAGOS_SERVICE_URL=http://pagos:3002
+      - ORCHESTRATOR_URL=http://saga-orchestrator:3003
+      - CHOREOGRAPHY_URL=http://saga-choreography:3004
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./carrito:/app
+    command: python app.py
+
+  inventario:
+    build: ./inventario
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/saga
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./inventario:/app
+    command: python app.py
+
+  pagos:
+    build: ./pagos
+    ports:
+      - "3002:3002"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/saga
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./pagos:/app
+    command: python app.py
+
+  # Saga Orchestrator
+  saga-orchestrator:
+    build: ./saga_orchestrator
+    ports:
+      - "3003:3003"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/saga
+      - CARRITO_SERVICE_URL=http://carrito:3000
+      - INVENTARIO_SERVICE_URL=http://inventario:3001
+      - PAGOS_SERVICE_URL=http://pagos:3002
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./saga_orchestrator:/app
+    command: python orchestrator.py
+
+  # Saga Choreography Coordinator
+  saga-choreography:
+    build: ./saga_choreography
+    ports:
+      - "3004:3004"
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./saga_choreography:/app
+    command: python coordinator.py
+
+volumes:
+  pgdata:

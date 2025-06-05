@@ -1,0 +1,115 @@
+swagger: "2.0"
+info:
+  title: "Shopping Cart API"
+  description: "REST API for shopping cart management with inventory and payment integration"
+  version: "1.0.0"
+  contact:
+    name: "API Support"
+    email: "support@example.com"
+host: "localhost:5000"
+basePath: "/"
+schemes:
+  - "http"
+  - "https"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+tags:
+  - name: "Cart"
+    description: "Cart management operations"
+  - name: "Cart Items"
+    description: "Cart item operations"
+  - name: "Checkout"
+    description: "Checkout and payment operations"
+  - name: "Orders"
+    description: "Order management operations"
+definitions:
+  Cart:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+        description: "Cart ID"
+      user_id:
+        type: "string"
+        description: "User ID"
+      status:
+        type: "string"
+        enum: ["active", "checked_out"]
+        description: "Cart status"
+      created_at:
+        type: "string"
+        format: "date-time"
+        description: "Creation timestamp"
+      updated_at:
+        type: "string"
+        format: "date-time"
+        description: "Last update timestamp"
+      items:
+        type: "array"
+        items:
+          $ref: "#/definitions/CartItem"
+        description: "Cart items"
+  CartItem:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+        description: "Cart item ID"
+      cart_id:
+        type: "string"
+        format: "uuid"
+        description: "Cart ID"
+      product_id:
+        type: "string"
+        description: "Product ID"
+      quantity:
+        type: "integer"
+        minimum: 1
+        description: "Item quantity"
+      unit_price:
+        type: "number"
+        format: "decimal"
+        description: "Unit price"
+      created_at:
+        type: "string"
+        format: "date-time"
+        description: "Creation timestamp"
+  Order:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        format: "uuid"
+        description: "Order ID"
+      cart_id:
+        type: "string"
+        format: "uuid"
+        description: "Cart ID"
+      user_id:
+        type: "string"
+        description: "User ID"
+      total_amount:
+        type: "number"
+        format: "decimal"
+        description: "Total order amount"
+      payment_id:
+        type: "string"
+        description: "Payment ID"
+      status:
+        type: "string"
+        enum: ["pending", "paid", "failed"]
+        description: "Order status"
+      created_at:
+        type: "string"
+        format: "date-time"
+        description: "Creation timestamp"
+  Error:
+    type: "object"
+    properties:
+      error:
+        type: "string"
+        description: "Error message"
