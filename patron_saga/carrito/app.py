@@ -592,6 +592,24 @@ def get_order(order_id):
     return order_schema.dump(order)
 
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({
+        'status': 'healthy',
+        'service': 'cart-service',
+        'timestamp': datetime.utcnow().isoformat()
+    })
+
+
+# Register saga blueprint
+try:
+    from saga_endpoints import saga_bp
+    app.register_blueprint(saga_bp)
+    print("Saga endpoints registered successfully")
+except ImportError as e:
+    print(f"Warning: Could not import saga endpoints: {e}")
+
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

@@ -9,7 +9,7 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# 1. Setup test data
+# 1. Setup test data (ignore SKU already exists)
 echo -e "${BLUE}📦 Creating test products...${NC}"
 
 curl -s -X POST http://localhost:3001/api/products \
@@ -21,7 +21,7 @@ curl -s -X POST http://localhost:3001/api/products \
     "quantity": 10,
     "category": "Electronics",
     "sku": "LAPTOP-GAMING-001"
-  }' | jq
+  }' | jq 2>/dev/null || echo "Product already exists or created"
 
 curl -s -X POST http://localhost:3001/api/products \
   -H "Content-Type: application/json" \
@@ -32,7 +32,7 @@ curl -s -X POST http://localhost:3001/api/products \
     "quantity": 50,
     "category": "Accessories",
     "sku": "MOUSE-WIRELESS-001"
-  }' | jq
+  }' | jq 2>/dev/null || echo "Product already exists or created"
 
 # 2. Create carts
 echo -e "${BLUE}🛒 Creating test carts...${NC}"
@@ -87,7 +87,7 @@ curl -s http://localhost:3003/saga/$ORCHESTRATED_SAGA_ID | jq
 # 4. Test Choreographed Saga
 echo -e "${YELLOW}🎭 Testing CHOREOGRAPHED Saga Pattern...${NC}"
 
-CHOREOGRAPHED_SAGA=$(curl -s -X POST http://localhost:3003/saga/choreography/checkout \
+CHOREOGRAPHED_SAGA=$(curl -s -X POST http://localhost:3004/saga/choreography/checkout \
   -H "Content-Type: application/json" \
   -d '{
     "cart_id": "'$CHOREOGRAPHED_CART_ID'",
@@ -114,7 +114,7 @@ sleep 5
 echo -e "${BLUE}💚 Final system health check...${NC}"
 
 echo -e "${GREEN}Cart Service:${NC}"
-curl -s http://localhost:3000/health | jq
+curl -s http://localhost:3000/health | jq 2>/dev/null || echo "Cart service health endpoint not available"
 
 echo -e "${GREEN}Inventory Service:${NC}"
 curl -s http://localhost:3001/health | jq
