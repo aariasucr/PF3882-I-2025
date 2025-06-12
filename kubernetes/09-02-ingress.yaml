@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress # Ingress es un recurso de Kubernetes que permite exponer servicios HTTP y HTTPS al exterior del clúster basado en reglas de enrutamiento (paths)
+metadata:
+  name: hello-app
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /v1
+            pathType: Prefix
+            backend:
+              service:
+                name: hello-v1
+                port:
+                  number: 8080
+          - path: /v2
+            pathType: Prefix
+            backend:
+              service:
+                name: hello-v2
+                port:
+                  number: 8080

@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: StatefulSet # StatefulSet tienen un volumen (directorio o disco) persistente asociado a cada Pod.  Por ejemplo para una base de datos, donde cada Pod necesita un volumen persistente
+metadata:
+  name: mi-statefulset
+spec:
+  selector:
+    matchLabels:
+      app: experimentos
+  serviceName: "mi-super-app"
+  replicas: 1 # si se desea ejecutar más de un Pod, se debe tener en cuenta que cada Pod tendrá su propio volumen persistente
+  template:
+    metadata:
+      labels:
+        app: experimentos
+    spec:
+      containers:
+        - name: mi-super-app
+          image: busybox
+          args:
+            - sleep
+            - infinity
+          volumeMounts:
+            - mountPath: "/data"
+              name: mi-super-volumen
+  volumeClaimTemplates:
+    - metadata:
+        name: mi-super-volumen
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
+        storageClassName: do-block-storage # storageClassName es el nombre de la clase de almacenamiento que se usará para crear el volumen persistente

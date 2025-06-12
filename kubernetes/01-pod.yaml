@@ -1,0 +1,9 @@
+apiVersion: v1 # version de la API de Kubernetes
+kind: Pod # tipo de recurso
+metadata: # metadatos del recurso (etiquetas, nombres, etc)
+  name: nginx # nombre del Pod
+spec: # especificación del Pod
+  containers: # lista de contenedores que componen el Pod
+    - name: nginx # nombre del contenedor
+      # image: nginx:alpine # imagen del contenedor
+      image: aariasucr/patito:2.0

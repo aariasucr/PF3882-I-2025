@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: game-demo
+data:
+  # property-like keys; each key maps to a simple value
+  parametro_inicial: "3"
+  nombre_de_algun_archivo: "patito-feliz.properties"
+  #
+  # file-like keys
+  parametros.properties: |
+    enemy.types=aliens,monsters
+    player.maximum-lives=5
+  config.properties: |
+    color.good=purple
+    color.bad=yellow
+    allow.textmode=true

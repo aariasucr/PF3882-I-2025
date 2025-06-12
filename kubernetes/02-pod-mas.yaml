@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx:alpine
+      env:
+        - name: UNA_VARIABLE
+          value: "patito"
+        - name: LA_OTRA_VARIABLE
+          value: "FELIZ"
+        - name: IP_DE_MI_NODO # Variable de entorno que obtiene la IP del nodo
+          valueFrom:
+            fieldRef: # fieldRef se usa para obtener una variable especific del Pod
+              fieldPath: status.hostIP # status.hostIP la IP del nodo donde se ejecuta el Pod
+      resources:
+        requests: # recursos garantizados para el contenedor
+          memory: "64Mi"
+          cpu: "200m" # 1000 millicores = 1 core
+        limits: # recursos máximos que el contenedor puede usar
+          memory: "128Mi"
+          cpu: "500m"
+      readinessProbe:
+        httpGet: # espera una respuesta HTTP 200 OK
+          path: /
+          port: 80
+        initialDelaySeconds: 5
+        periodSeconds: 10
+      livenessProbe:
+        tcpSocket: # espera una conexión TCP exitosa
+          port: 80
+        initialDelaySeconds: 15
+        periodSeconds: 20
+      ports:
+        - containerPort: 80
