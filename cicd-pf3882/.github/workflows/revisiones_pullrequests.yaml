@@ -1,0 +1,51 @@
+name: Revisiones de pull requests
+
+on:
+  pull_request:
+
+jobs:
+  revisiones:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Ejecutar Pytest
+        run: PYTHONPATH=$(pwd) pytest *.py ./tests/
+
+      - name: Ejecutar Pylint
+        run: PYTHONPATH=$(pwd) pylint *.py ./tests/
+
+      - name: Ejecutar isort
+        run: isort --check-only *.py ./tests/
+
+      - name: EjecutarRun Radon (Cyclomatic Complexity)
+        run: radon cc *.py -nc
+
+      - name: Ejecutar Flake8
+        run: flake8 *.py ./tests/
+
+      - name: Ejecutar Black
+        run: black --check *.py ./tests/
+
+      - name: Ejecutar pip-audit
+        run: pip-audit
+
+      - name: Ejecutar mypy
+        run: mypy *.py ./tests/
+
+      - name: Ejecutar Bandit (Security)
+        run: bandit -r *.py
+        continue-on-error: true

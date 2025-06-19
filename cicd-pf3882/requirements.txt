@@ -1,0 +1,11 @@
+Faker
+flasgger
+Flask
+flask-marshmallow
+Flask-SQLAlchemy
+marshmallow
+marshmallow-sqlalchemy
+python-dotenv
+requests
+configcat-client
+urllib3==2.5.0
